@@ -35,7 +35,7 @@ All tasks are organized using bundles. Each bundle is a directory containing:
 
 ### Directory Structure
 - `bundles/`: Task scenario bundles (each bundle contains target.yml, task.md, etc.)
-- `workspace/`: Auto-managed repository clones (main repos for worktree creation)
+- `workspace/`: Auto-managed bare repository clones (used as base for worktree creation)
 - `tasks/`: Generated task directories (format: `001_repo_branch/`)
   - Each task directory contains:
     - `<repo-name>/`: Git worktree with repository code on the specified branch
@@ -86,13 +86,14 @@ tasks/001_repo_branch/
 ## Automation Workflow
 
 1. **Repository Setup**: Automatically forks and clones repositories if not present in workspace
-   - Full clone (not shallow) to support git worktrees
+   - **Bare clone** (no working directory) to support git worktrees
+   - All branches available for worktree creation
    - Fetches latest branches from all remotes
 2. **Worktree Generation**: Creates isolated git worktrees for each org/repo/branch combination
    - Creates task directory first
    - Creates git worktree in a subdirectory named after the repository
    - Each worktree is an independent working directory
-   - Worktrees share the .git directory from the main workspace repo
+   - Worktrees share the git metadata from the bare repository
    - Generates task.md file at task directory root level (outside worktree)
 3. **Task Execution**: Runs Claude Code in each repository subdirectory with configurable concurrency
    - **Concurrency Control**: Use `--max-jobs N` to control parallelism (default: 4)
@@ -102,10 +103,12 @@ tasks/001_repo_branch/
 
 ### Git Worktree Architecture
 
+- **Bare Repository Base**: Workspace contains bare clones (no working directory)
 - **True Parallelization**: Each task runs in its own git worktree
 - **Same-Repo, Different-Branch**: Can execute concurrently without conflicts
 - **Isolated Environments**: Each worktree has independent working files
-- **Shared .git**: All worktrees share the same .git directory (efficient storage)
+- **Shared Git Metadata**: All worktrees share the same bare repository (efficient storage)
+- **No Branch Conflicts**: Bare repository doesn't occupy any branch
 - **Manual Recovery**: Failed tasks can be manually fixed by cd'ing into the worktree directory
 - **Flexible Concurrency**: Control parallelism with `--max-jobs` (1 = sequential, >1 = parallel)
 
@@ -203,7 +206,7 @@ One of the key benefits of the worktree architecture is the ability to manually 
 The system automatically:
 - Checks for existing repository forks
 - Creates forks if needed using GitHub CLI
-- Clones forked repositories to workspace (full clone for worktree support)
+- Clones forked repositories to workspace as **bare repositories** for worktree support
 - Fetches latest branches from all remotes
 - Sets up upstream remotes for PR workflows
 - Creates git worktrees for isolated task execution
