@@ -1,4 +1,4 @@
-# Claude Multi-Repo Agent
+# CodeSweep
 
 A powerful automation toolkit that leverages Claude Code to execute tasks across multiple GitHub repositories simultaneously. Perfect for batch operations, code maintenance, and cross-repository updates. Built with modern JavaScript using [Google Zx](https://github.com/google/zx).
 
@@ -35,8 +35,8 @@ A powerful automation toolkit that leverages Claude Code to execute tasks across
 
 ```bash
 # Clone the repository
-git clone git@github.com:stolostron/claude-multi-repo-agent.git
-cd claude-multi-repo-agent
+git clone git@github.com:stolostron/codesweep.git
+cd codesweep
 
 # Install dependencies
 npm install
@@ -164,7 +164,7 @@ Each bundle can have its own `config.json` to set default behavior:
 ## 📁 Project Structure
 
 ```
-claude-multi-repo-agent/
+codesweep/
 ├── gen-and-run-tasks.mjs   # Main automation script
 ├── package.json            # Node.js dependencies
 ├── lib/                    # Core library modules
